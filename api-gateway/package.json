@@ -1,0 +1,29 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "E-Learning API Gateway",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "lint": "eslint src --ext .ts,.js",
+    "lint:fix": "eslint src --ext .ts,.js --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^9.3.1",
+    "@fastify/cors": "^8.3.0",
+    "@fastify/helmet": "^11.1.1",
+    "@fastify/http-proxy": "^9.3.0",
+    "@fastify/rate-limit": "^9.0.0",
+    "fastify": "^4.24.3",
+    "http-proxy": "^1.18.1"
+  },
+  "devDependencies": {
+    "@types/http-proxy": "^1.17.17",
+    "@types/node": "^20.8.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

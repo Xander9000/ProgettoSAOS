@@ -1,0 +1,26 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["notification_service_schema"]
+}
+
+model Notification {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  userId    String   @map("user_id")
+  type      String
+  title     String
+  message   String
+  courseId  String?  @map("course_id")
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@map("notifications")
+  @@schema("notification_service_schema")
+}

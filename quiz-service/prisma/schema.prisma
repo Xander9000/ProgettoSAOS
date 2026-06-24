@@ -1,0 +1,161 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["quiz_service_schema"]
+}
+
+enum QuizStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+
+  @@schema("quiz_service_schema")
+}
+
+enum QuizType {
+  ESAME
+  PREPARAZIONE
+  CUSTOM
+
+  @@schema("quiz_service_schema")
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  OPEN_ANSWER
+
+  @@schema("quiz_service_schema")
+}
+
+enum GradingStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  NEEDS_REVIEW
+
+  @@schema("quiz_service_schema")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  role         String   @default("STUDENT")
+  firstName    String?  @map("first_name")
+  lastName     String?  @map("last_name")
+  preferences  Json?    @default("{}")
+  tokenVersion Int      @default(0) @map("token_version")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+  @@schema("quiz_service_schema")
+}
+
+model Quiz {
+  id          String     @id @default(uuid())
+  courseId    String     @map("course_id")
+  title       String
+  description String?
+  status      QuizStatus @default(DRAFT)
+  quizType    QuizType   @default(CUSTOM) @map("quiz_type")
+  maxAttempts Int        @default(3) @map("max_attempts")
+  shuffleQuestions Boolean @default(false) @map("shuffle_questions")
+  shuffleAnswers    Boolean @default(false) @map("shuffle_answers")
+  showResultsImmediately Boolean @default(true) @map("show_results_immediately")
+  passingScore Int        @default(70) @map("passing_score")
+  timeLimit    Int?       @map("time_limit")
+  enableNegativePoints Boolean @default(false) @map("enable_negative_points")
+  negativePointsValue Float  @default(0.5) @map("negative_points_value")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  questions   Question[]
+  attempts    Attempt[]
+
+  @@map("quizzes")
+  @@schema("quiz_service_schema")
+}
+
+model Question {
+  id          String       @id @default(uuid())
+  quizId      String       @map("quiz_id")
+  text        String
+  order       Int          @default(0)
+  questionType QuestionType @default(MULTIPLE_CHOICE) @map("question_type")
+  points      Int          @default(1)
+  negativePoints Float     @default(0) @map("negative_points")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  quiz        Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+  submissions QuestionSubmission[]
+
+  @@map("questions")
+  @@schema("quiz_service_schema")
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  questionId String   @map("question_id")
+  text       String
+  isCorrect  Boolean  @default(false) @map("is_correct")
+  order      Int      @default(0)
+  points     Int      @default(1) @map("points")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  submissions QuestionSubmission[]
+
+  @@map("answers")
+  @@schema("quiz_service_schema")
+}
+
+model Attempt {
+  id           String       @id @default(uuid())
+  studentId    String       @map("student_id")
+  quizId       String       @map("quiz_id")
+  score        Float?       
+  maxScore     Float        @default(0) @map("max_score")
+  percentage   Float?       @map("percentage")
+  passed       Boolean?     @map("passed")
+  startedAt    DateTime     @default(now()) @map("started_at")
+  completedAt  DateTime?    @map("completed_at")
+  gradedAt     DateTime?    @map("graded_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  quiz         Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  submissions  QuestionSubmission[]
+
+  @@map("attempts")
+  @@schema("quiz_service_schema")
+}
+
+model QuestionSubmission {
+  id          String         @id @default(uuid())
+  attemptId   String         @map("attempt_id")
+  questionId  String         @map("question_id")
+  answerId    String?        @map("answer_id")
+  textAnswer  String?        @map("text_answer")
+  points      Float          @default(0)
+  gradingStatus GradingStatus @default(PENDING) @map("grading_status")
+  feedback    String?        @map("feedback")
+  gradedAt    DateTime?      @map("graded_at")
+  gradedBy    String?        @map("graded_by")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  attempt     Attempt        @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question    Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer      Answer?        @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
+  @@map("question_submissions")
+  @@schema("quiz_service_schema")
+}

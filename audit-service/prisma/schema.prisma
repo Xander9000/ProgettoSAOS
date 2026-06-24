@@ -1,0 +1,32 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["audit_service_schema"]
+}
+
+enum AuditSeverity {
+  INFO
+  WARNING
+  HIGH
+  CRITICAL
+
+  @@schema("audit_service_schema")
+}
+
+model AuditLog {
+  id         Int           @id @default(autoincrement())
+  eventType  String        @map("event_type")
+  userId     String?       @map("user_id")
+  severity   AuditSeverity @default(INFO)
+  details    Json?         @default("{}")
+  source     String?       @default("SYSTEM")
+  receivedAt DateTime      @default(now()) @map("received_at")
+
+  @@map("audit_logs")
+  @@schema("audit_service_schema")
+}

@@ -1,0 +1,63 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["course_service_schema"]
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+  PENDING
+
+  @@schema("course_service_schema")
+}
+
+model Course {
+  id            String       @id @default(dbgenerated("gen_random_uuid()"))
+  title         String
+  description   String?
+  teacherId     String       @map("teacher_id")
+  isPublished   Boolean      @default(false) @map("is_published")
+  enrollmentType String      @default("FREE") @map("enrollment_type")
+  enrollmentKey  String?     @map("enrollment_key")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  enrollments   Enrollment[]
+  teacherMessages TeacherMessage[]
+
+  @@map("courses")
+  @@schema("course_service_schema")
+}
+
+model TeacherMessage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  courseId  String   @map("course_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("teacher_messages")
+  @@schema("course_service_schema")
+}
+
+model Enrollment {
+  courseId  String           @map("course_id")
+  studentId String           @map("student_id")
+  status    String           @default("ACTIVE")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, studentId])
+  @@map("enrollments")
+  @@schema("course_service_schema")
+}

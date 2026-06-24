@@ -1,0 +1,100 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth_service_schema"]
+}
+
+// User Roles Enum
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+
+  @@schema("auth_service_schema")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         String   @default("STUDENT")
+  firstName    String?  @map("first_name")
+  lastName     String?  @map("last_name")
+  preferences  Json?    @default("{}")
+  tokenVersion Int      @default(0) @map("token_version")
+  sessionInvalidated Boolean @default(false) @map("session_invalidated")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  twoFactorSecret String?  @map("two_factor_secret")
+  twoFactorEnabled Boolean @default(false) @map("two_factor_enabled")
+  webauthnCurrentChallenge String? @map("webauthn_current_challenge")
+  isVerified Boolean @default(false) @map("is_verified")
+  verificationCodeHash String? @map("verification_code_hash")
+  verificationCodeExpiresAt DateTime? @map("verification_code_expires_at")
+  verificationAttempts Int @default(0) @map("verification_attempts")
+  passwordResetTokenHash String? @map("password_reset_token_hash")
+  passwordResetTokenExpiresAt DateTime? @map("password_reset_token_expires_at")
+
+  sessions     Session[]
+  passkeys     PasskeyCredential[]
+
+  @@map("users")
+  @@schema("auth_service_schema")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  refreshToken String   @unique @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+  @@schema("auth_service_schema")
+}
+
+model RevokedToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique @map("token_hash")
+  userId    String?  @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("revoked_tokens")
+  @@schema("auth_service_schema")
+}
+
+model PendingLogin {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  expiresAt    DateTime  @map("expires_at")
+  attemptCount Int       @default(0) @map("attempt_count")
+  usedAt       DateTime? @map("used_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  @@map("pending_logins")
+  @@schema("auth_service_schema")
+}
+
+model PasskeyCredential {
+  id                  String   @id @default(uuid())
+  userId              String   @map("user_id")
+  credentialId        Bytes    @unique @map("credential_id")
+  credentialPublicKey Bytes    @map("credential_public_key")
+  counter             BigInt   @default(0)
+  transports          String?
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("passkey_credentials")
+  @@schema("auth_service_schema")
+}

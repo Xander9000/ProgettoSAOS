@@ -1,0 +1,39 @@
+{
+  "name": "e-learning-platform-root",
+  "version": "1.0.0",
+  "description": "Root orchestrator for E-Learning Microservices",
+  "scripts": {
+    "install-all": "npm install && npm install --prefix api-gateway && npm install --prefix auth-service && npm install --prefix user-service && npm install --prefix course-service && npm install --prefix content-service && npm install --prefix quiz-service && npm install --prefix notification-service && npm install --prefix audit-service",
+    "infra": "docker-compose up -d",
+    "infra-stop": "docker-compose down",
+    "dev": "concurrently -n \"GATEWAY,AUTH,USER,COURSE,CONTENT,QUIZ,NOTIF,AUDIT\" -c \"yellow,blue,green,magenta,cyan,red,white\" \"npm run dev --prefix api-gateway\" \"npm run dev --prefix auth-service\" \"npm run dev --prefix user-service\" \"npm run dev --prefix course-service\" \"npm run dev --prefix content-service\" \"npm run dev --prefix quiz-service\" \"npm run dev --prefix notification-service\" \"npm run dev --prefix audit-service\"",
+    "start": "npm run infra && npm run dev",
+    "db:init": "npx ts-node scripts/init_schemas.ts",
+    "seed:demo": "npx ts-node scripts/seed_demo.ts",
+    "db:reset": "npm run db:init && npm run seed:demo",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "typecheck": "tsc --noEmit",
+    "typecheck:all": "npm run typecheck --prefix api-gateway && npm run typecheck --prefix auth-service && npm run typecheck --prefix user-service && npm run typecheck --prefix course-service && npm run typecheck --prefix content-service && npm run typecheck --prefix quiz-service && npm run typecheck --prefix notification-service && npm run typecheck --prefix audit-service && npm run typecheck --prefix web",
+    "check": "npm run lint && npm run typecheck:all"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.4.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^22.13.10",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "bcrypt": "^5.1.1",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "prisma": "^6.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/pg": "^8.20.0",
+    "pg": "^8.20.0"
+  }
+}

@@ -1,0 +1,26 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["content_service_schema"]
+}
+
+model Content {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  courseId  String   @map("course_id")
+  type      String
+  title     String
+  filePath  String?  @map("file_path")
+  mimeType  String?  @map("mime_type")
+  size      String?
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("contents")
+  @@schema("content_service_schema")
+}
