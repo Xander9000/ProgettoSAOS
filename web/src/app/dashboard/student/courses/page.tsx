@@ -80,7 +80,7 @@ export default function StudentCoursesPage() {
     }
 
     if (enrollmentType === 'APPROVAL') {
-      alert('Questo corso richiede l\'approvazione del docente. La tua richiesta è stata inviata.');
+      await enrollInCourse(courseId, '');
       return;
     }
 

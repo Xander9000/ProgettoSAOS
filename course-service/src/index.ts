@@ -655,6 +655,15 @@ fastify.post<{ Params: CourseParams; Body: EnrollBody }>('/:id/enroll', { preVal
 
   if (course.enrollmentType === 'APPROVAL') {
     fastify.log.info(`Enrollment richiesto: L'utente ${user.userId} ha richiesto l'iscrizione al corso ${courseId} - in attesa di approvazione`);
+
+    createNotification(
+      course.teacherId,
+      'ENROLLMENT',
+      'Nuova richiesta di iscrizione',
+      `Uno studente ha richiesto l'iscrizione al tuo corso "${course.title}"`,
+      courseId
+    );
+
     return { success: true, message: 'Richiesta di iscrizione inviata. In attesa di approvazione del docente.' };
   }
 
