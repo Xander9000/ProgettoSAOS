@@ -105,8 +105,7 @@ export default function QuizDetailPage() {
               enableNegativePoints: settingsData.enableNegativePoints || false,
               negativePointsValue: settingsData.negativePointsValue || 0.5
             });
-          } catch (err) {
-            console.error(err);
+          } catch {
             alert('Errore nel caricamento del quiz');
             router.push('/dashboard/teacher/quiz');
           } finally {
@@ -148,8 +147,7 @@ export default function QuizDetailPage() {
       
       const settingsData = await api.quiz.getSettings(quizId);
       setSettings(settingsData);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nel salvataggio');
     } finally {
       setSaving(false);
@@ -200,8 +198,7 @@ export default function QuizDetailPage() {
       
       const settingsData = await api.quiz.getSettings(quizId);
       setSettings(settingsData);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nell\'aggiunta della domanda');
     } finally {
       setSaving(false);
@@ -235,8 +232,7 @@ export default function QuizDetailPage() {
 
       const quizData = await api.quiz.get(quizId);
       setQuestions(quizData.questions || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nella modifica della domanda');
     } finally {
       setSaving(false);
@@ -253,8 +249,7 @@ export default function QuizDetailPage() {
       
       const settingsData = await api.quiz.getSettings(quizId);
       setSettings(settingsData);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nell\'eliminazione');
     }
   };
@@ -272,8 +267,7 @@ export default function QuizDetailPage() {
       
       const quizData = await api.quiz.get(quizId);
       setQuestions(quizData.questions || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nell\'aggiunta della risposta');
     }
   };
@@ -283,8 +277,7 @@ export default function QuizDetailPage() {
       await api.quiz.updateAnswer(quizId, questionId, answerId, { isCorrect: !isCorrect });
       const quizData = await api.quiz.get(quizId);
       setQuestions(quizData.questions || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -293,8 +286,7 @@ export default function QuizDetailPage() {
       await api.quiz.deleteAnswer(quizId, questionId, answerId);
       const quizData = await api.quiz.get(quizId);
       setQuestions(quizData.questions || []);
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -318,8 +310,7 @@ export default function QuizDetailPage() {
         previewWindow.document.write(html);
         previewWindow.document.close();
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nel caricamento preview');
     }
   };
@@ -397,9 +388,8 @@ export default function QuizDetailPage() {
                   await api.quiz.publish(quizId);
                   const settingsData = await api.quiz.getSettings(quizId);
                   setSettings(settingsData);
-                } catch (err) {
-                  console.error(err);
-                  alert('Errore nella pubblicazione');
+                  } catch {
+                    alert('Errore nella pubblicazione');
                 }
               }}
               className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl transition-colors"

@@ -49,8 +49,7 @@ export default function RoleDashboard() {
         }
 
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+      } catch {
         router.replace('/login');
       }
     }

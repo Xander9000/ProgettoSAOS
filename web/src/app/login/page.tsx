@@ -131,7 +131,6 @@ export default function LoginPage() {
       await api.auth.verifyWebauthnAuth(email, authResp);
       await proceedToDashboard();
     } catch (err: any) {
-      console.error(err);
       setError(err.message || 'WebAuthn login fallito');
     } finally {
       setLoading(false);

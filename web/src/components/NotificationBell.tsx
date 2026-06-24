@@ -45,8 +45,7 @@ export default function NotificationBell({ onRemovalNotification, onRoleChangeNo
       if (data.notifications.length > 0) {
         lastCheckRef.current = data.notifications[0].createdAt;
       }
-    } catch (err) {
-      console.error('Failed to fetch notifications:', err);
+    } catch {
     }
   };
 
@@ -90,8 +89,7 @@ export default function NotificationBell({ onRemovalNotification, onRoleChangeNo
         if (data.unreadCount !== undefined) {
           setUnreadCount(data.unreadCount);
         }
-      } catch (err) {
-        console.error('Long polling error:', err);
+      } catch {
         await new Promise(resolve => setTimeout(resolve, 5000));
       }
     }
@@ -132,8 +130,7 @@ export default function NotificationBell({ onRemovalNotification, onRoleChangeNo
           return next;
         });
         setUnreadCount(prev => Math.max(0, prev - 1));
-      } catch (err) {
-        console.error('Failed to mark notification as read:', err);
+      } catch {
       }
     }
     setSelectedNotification(notification);
@@ -151,8 +148,7 @@ export default function NotificationBell({ onRemovalNotification, onRoleChangeNo
       notificationsRef.current = data.notifications;
       setNotifications(data.notifications);
       setUnreadCount(data.unreadCount);
-    } catch (err) {
-      console.error('Failed to mark all as read:', err);
+    } catch {
     }
   };
 

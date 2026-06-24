@@ -32,8 +32,7 @@ export default function TeacherCoursesPage() {
       setCourses(courses.map(c => 
         c.id === courseId ? { ...c, isPublished: true } : c
       ));
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -43,8 +42,7 @@ export default function TeacherCoursesPage() {
     try {
       const data = await api.courses.getEnrollments(courseId);
       setEnrollments(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setLoadingEnrollments(false);
     }
@@ -56,8 +54,7 @@ export default function TeacherCoursesPage() {
       setEnrollments(enrollments.map(e => 
         e.studentId === studentId ? { ...e, status: 'ACTIVE' } : e
       ));
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -65,8 +62,7 @@ export default function TeacherCoursesPage() {
     try {
       await api.courses.rejectEnrollment(courseId, studentId);
       setEnrollments(enrollments.filter(e => e.studentId !== studentId));
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -87,8 +83,7 @@ export default function TeacherCoursesPage() {
           try {
             const data = await api.courses.myCourses();
             setCourses(data);
-          } catch (err) {
-            console.error(err);
+          } catch {
           } finally {
             setLoading(false);
           }

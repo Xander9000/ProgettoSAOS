@@ -1,4 +1,12 @@
-# E-Learning Platform
+<p align="center">  
+    <img src="web/public/icon.svg" alt="E-Learning Platform Logo" width="96">
+</p>
+    
+<h1 align="center">E-Learning Platform</h1>
+    
+<p align="center">  
+    Piattaforma e-learning a microservizi con backend TypeScript/Fastify, frontend Next.js/React, PostgreSQL e Docker Compose.
+</p>
 
 E-Learning Platform è una piattaforma per la gestione di corsi online, materiali didattici, quiz e notifiche, basata su un'architettura a microservizi (SOA). Sviluppata con TypeScript, Fastify e Prisma ORM per il backend, e Next.js per il frontend, offre una soluzione modulare, scalabile e sicura per ambienti educativi. L'infrastruttura containerizzata con Docker garantisce un deployment consistente e riproducibile.
 
@@ -401,7 +409,6 @@ Vai su `http://localhost:8080`.
 | **Studente**    | `student1@test.com`     | `student123` |
 
 Sono presenti 2 admin, 3 docenti (`teacher1`-`teacher3`) e 5 studenti (`student1`-`student5`) con la stessa password per ruolo.
-
 
 ### Alternativa: rigenerare le chiavi JWT (senza openssl)
 

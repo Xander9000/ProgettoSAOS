@@ -119,8 +119,7 @@ export default function QuizStatsPage() {
             setAttempts(attemptsData.attempts || []);
             setPagination(attemptsData.pagination || { page: 1, limit: 10, total: 0, totalPages: 0 });
             setAllAttemptsList(allAttemptsData.attempts || []);
-          } catch (err) {
-            console.error(err);
+          } catch {
           } finally {
             setLoading(false);
           }
@@ -140,8 +139,7 @@ export default function QuizStatsPage() {
       const attemptsData = await api.quiz.getAttempts(quizId, page, 10);
       setAttempts(attemptsData.attempts || []);
       setPagination(attemptsData.pagination || { page, limit: 10, total: 0, totalPages: 0 });
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -172,8 +170,7 @@ export default function QuizStatsPage() {
       
       const statsData = await api.quiz.getStats(quizId);
       setStats(statsData);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nella valutazione');
     } finally {
       setGrading(false);
@@ -218,8 +215,7 @@ export default function QuizStatsPage() {
       
       const statsData = await api.quiz.getStats(quizId);
       setStats(statsData);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nel salvataggio');
     } finally {
       setGrading(false);

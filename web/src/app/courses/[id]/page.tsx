@@ -163,8 +163,7 @@ export default function CourseDetailPage() {
             setMessages(messagesData);
           }
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
       } finally {
         setLoading(false);
       }
@@ -200,8 +199,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante upload');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante upload');
     } finally {
       setUploading(false);
@@ -233,8 +231,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante eliminazione');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante eliminazione');
     }
   };
@@ -259,8 +256,7 @@ export default function CourseDetailPage() {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante il caricamento');
     }
   };
@@ -288,8 +284,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante aggiornamento visibilità');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante aggiornamento visibilità');
     }
   };
@@ -339,8 +334,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante aggiornamento batch');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante aggiornamento batch');
     }
   };
@@ -369,8 +363,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante invio messaggio');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante invio messaggio');
     } finally {
       setSendingMessage(false);
@@ -399,8 +392,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante eliminazione messaggio');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante eliminazione messaggio');
     }
   };
@@ -428,8 +420,7 @@ export default function CourseDetailPage() {
         const error = await response.json();
         alert(error.error || 'Errore durante rimozione studente');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore durante rimozione studente');
     }
   };

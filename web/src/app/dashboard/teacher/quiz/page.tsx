@@ -64,8 +64,7 @@ export default function TeacherQuizPage() {
             ]);
             setQuizzes(quizzesData.quizzes || []);
             setCourses(coursesData || []);
-          } catch (err) {
-            console.error(err);
+          } catch {
           } finally {
             setLoading(false);
           }
@@ -154,8 +153,7 @@ export default function TeacherQuizPage() {
         const quizzesData = await api.quiz.myCoursesQuizzes();
         setQuizzes(quizzesData.quizzes || []);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('Errore nella creazione del quiz');
     } finally {
       setCreating(false);
@@ -306,8 +304,7 @@ export default function TeacherQuizPage() {
                         await api.quiz.publish(quiz.id);
                         const quizzesData = await api.quiz.myCoursesQuizzes();
                         setQuizzes(quizzesData.quizzes || []);
-                      } catch (err) {
-                        console.error(err);
+                      } catch {
                       }
                     }}
                     className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-900 text-xs font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-500/10 active:scale-95"

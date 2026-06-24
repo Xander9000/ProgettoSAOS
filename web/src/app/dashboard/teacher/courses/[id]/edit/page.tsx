@@ -57,8 +57,7 @@ export default function EditCoursePage() {
     try {
       const data = await api.quiz.getByCourse(courseId);
       setQuizzes(data);
-    } catch (err) {
-      console.error('Error fetching quizzes:', err);
+    } catch {
     } finally {
       setLoadingQuizzes(false);
     }

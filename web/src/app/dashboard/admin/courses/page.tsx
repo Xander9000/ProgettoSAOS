@@ -28,8 +28,7 @@ export default function AdminCoursesPage() {
         const data = await response.json();
         setCourses(data);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -55,8 +54,7 @@ export default function AdminCoursesPage() {
           c.id === courseId ? { ...c, isPublished: true } : c
         ));
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setActionLoading(null);
     }
@@ -82,8 +80,7 @@ export default function AdminCoursesPage() {
           c.id === courseId ? { ...c, isPublished: false } : c
         ));
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setActionLoading(null);
     }
@@ -114,8 +111,7 @@ export default function AdminCoursesPage() {
         const data = await response.json();
         alert(data.error || 'Errore nell\'eliminazione del corso');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setActionLoading(null);
     }

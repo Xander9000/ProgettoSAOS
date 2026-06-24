@@ -35,8 +35,7 @@ export default function AdminUsersPage() {
           u.id === userId ? { ...u, isVerified: true } : u
         ));
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
     } finally {
       setVerifying(null);
     }
@@ -68,11 +67,10 @@ export default function AdminUsersPage() {
               const data = await response.json();
               setUsers(data.users);
             }
-          } catch (err) {
-            console.error(err);
-          } finally {
-            setLoading(false);
-          }
+            } catch {
+            } finally {
+              setLoading(false);
+            }
         };
 
         fetchUsers();

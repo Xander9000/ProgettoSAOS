@@ -52,8 +52,7 @@ export default function ProfilePage() {
     try {
       const keys = await api.auth.getPasskeys();
       setPasskeys(keys);
-    } catch (err) {
-      console.error(err);
+    } catch {
     }
   };
 
@@ -115,14 +114,11 @@ export default function ProfilePage() {
     setActionLoading(true);
     try {
       const options = await api.auth.generateWebauthnRegOptions();
-      console.log('WebAuthn options:', JSON.stringify(options, null, 2));
       const authResp = await startRegistration(options);
-      console.log('WebAuthn response:', JSON.stringify(authResp, null, 2));
       await api.auth.verifyWebauthnReg(authResp);
       setSuccess('Passkey registrata con successo!');
       await fetchPasskeys();
     } catch (err: any) {
-      console.error('Passkey error:', err);
       setError(err.message || 'Registrazione Passkey fallita o annullata.');
     } finally {
       setActionLoading(false);

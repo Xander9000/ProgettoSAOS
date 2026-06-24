@@ -119,8 +119,7 @@ export default function SessionMonitor({ children, onForceLogout, pathname }: Se
         
         setCurrentTokenVersion(response.tokenVersion ?? 0);
       }
-    } catch (error) {
-      console.log('Session check failed, will retry next poll');
+    } catch {
     }
   }, [currentTokenVersion, getStoredUserId, getStoredRole, updateStoredRole, hasCheckedInitial]);
 

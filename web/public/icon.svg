@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   role="img"
+   aria-label="E-learning platform icon"
+   version="1.1"
+   id="svg14"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="elearning_vector_logo_clear_e.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview14"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="1.5917969"
+     inkscape:cx="256"
+     inkscape:cy="306.25767"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg14" />
+  <title
+     id="title1">E-Learning Platform</title>
+  <desc
+     id="desc1">Flat vector logo with open book, clear E letter, and graduation cap.</desc>
+  <defs
+     id="defs1">
+    <style
+       id="style1">
+      .bg { fill: #ffffff; }
+      .blue { fill: #083F91; }
+      .blue2 { fill: #0A4FA8; }
+      .teal { fill: #12BFB8; }
+      .white { fill: #ffffff; }
+    </style>
+  </defs>
+  <rect
+     class="bg"
+     width="512"
+     height="512"
+     rx="72"
+     id="rect1"
+     x="0"
+     y="0"
+     style="display:none" />
+  <!-- Open book base -->
+  <path
+     class="blue"
+     d="m 78,317.59018 c 0,-18 14,-32 32,-32 h 32 v 114 c 43,4 82,25 114,62 32,-37 71,-58 114,-62 v -114 h 32 c 18,0 32,14 32,32 v 97 c 0,19 -16,33 -35,31 -55,-4 -103,15 -135,51 -5,6 -11,6 -16,0 -32,-36 -80,-55 -135,-51 -19,2 -35,-12 -35,-31 z"
+     id="path1" />
+  <!-- Teal pages -->
+  <path
+     class="teal"
+     d="m 103.83312,263.59018 c 54.61927,1 105.96138,26 148.56441,73 v 107 c -39.32587,-40 -89.5756,-60 -148.56441,-63 z"
+     id="path2"
+     style="stroke-width:1" />
+  <path
+     class="teal"
+     d="m 411.93621,253.53864 c -55.77409,1.05235 -108.20173,27.36114 -151.70552,76.82167 v 112.60164 c 40.15734,-42.09407 91.4695,-63.14111 151.70552,-66.29816 z"
+     id="path3"
+     style="stroke-width:1" />
+  <!-- White page gaps -->
+  <!-- Lower cover curves -->
+  <path
+     class="blue2"
+     d="     M78 390     C143 382 207 403 256 462     C213 430 162 417 111 420     C94 421 78 410 78 395     Z"
+     id="path6" />
+  <path
+     class="blue2"
+     d="     M434 390     C369 382 305 403 256 462     C299 430 350 417 401 420     C418 421 434 410 434 395     Z"
+     id="path7" />
+  <!-- Central shield behind the E -->
+  <path
+     class="blue"
+     d="     M171 166     C196 155 225 149 256 149     C287 149 316 155 341 166     L341 357     C309 365 280 383 256 410     C232 383 203 365 171 357     Z"
+     id="path8" />
+  <!-- Clear E letter: white foreground, deliberately large for favicon readability -->
+  <path
+     class="white"
+     d="m 208.34601,203 h 98 v 34 h -59 v 25 h 49 v 33 h -49 v 28 h 63 v 35 h -102 z"
+     id="path9" />
+  <!-- Small blue notch to keep the E from looking like a block -->
+  <rect
+     class="blue"
+     x="253"
+     y="237"
+     width="64"
+     height="25"
+     id="rect9" />
+  <rect
+     class="blue"
+     x="253"
+     y="295"
+     width="65"
+     height="28"
+     id="rect10" />
+  <!-- Graduation cap top -->
+  <path
+     class="blue"
+     d="     M256 51     L101 123     C92 127 92 135 101 139     L169 168     C195 155 224 149 256 149     C288 149 317 155 343 168     L411 139     C420 135 420 127 411 123     Z"
+     id="path10" />
+  <!-- Cap band -->
+  <path
+     class="blue2"
+     d="     M169 168     C195 155 224 149 256 149     C288 149 317 155 343 168     L343 205     C316 196 287 191 256 191     C225 191 196 196 169 205     Z"
+     id="path11" />
+  <!-- White separation under cap -->
+  <path
+     class="white"
+     d="     M169 205     C196 196 225 191 256 191     C287 191 316 196 343 205     L343 218     C316 209 287 204 256 204     C225 204 196 209 169 218     Z"
+     id="path12" />
+  <!-- Tassel -->
+  <path
+     d="M377 136 L377 197"
+     fill="none"
+     stroke="#083F91"
+     stroke-width="11"
+     stroke-linecap="round"
+     id="path13" />
+  <circle
+     class="blue"
+     cx="377"
+     cy="203"
+     r="15"
+     id="circle13" />
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>E-Learning Platform</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

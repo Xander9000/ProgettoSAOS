@@ -51,8 +51,7 @@ export default function AdminCreateCoursePage() {
                 setTeacherId(data.teachers[0].id);
               }
             }
-          } catch (err) {
-            console.error('Errore nel caricamento dei teacher:', err);
+          } catch {
           } finally {
             setFetchingTeachers(false);
           }

@@ -63,8 +63,7 @@ export default function RootLayout({
         } else {
           router.replace('/login');
         }
-      } catch (error) {
-        console.log('[DEBUG] Session verification failed:', error);
+      } catch {
         if (!isPublicPath) {
           router.replace('/login');
         } else {

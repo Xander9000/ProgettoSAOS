@@ -65,7 +65,7 @@ export default function QuizPage() {
           setViewAttemptData(currentAttempt);
           setRenderedAttemptId(currentAttempt.id);
         }
-      }).catch(err => console.error('Error fetching results:', err));
+      }).catch(() => {});
     }
   }, [viewMode, quizId, loading]);
 
@@ -156,8 +156,7 @@ export default function QuizPage() {
             setQuizInfo((prev: any) => prev ? { ...prev, passingScore: results.quiz?.passingScore } : null);
           }
         }
-      } catch (err) {
-        console.error('Error polling results:', err);
+      } catch {
       }
     }, 10000);
 
@@ -179,8 +178,7 @@ export default function QuizPage() {
             setViewAttemptData(currentAttempt);
           }
         }
-      } catch (err) {
-        console.error('Error polling results:', err);
+      } catch {
       }
     }, 10000);
 
@@ -244,8 +242,7 @@ export default function QuizPage() {
         const err = await response.json();
         setError(err.error || 'Errore nell\'avvio del quiz');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError('Errore nell\'avvio del quiz');
     } finally {
       setStarting(false);
@@ -296,8 +293,7 @@ export default function QuizPage() {
         const err = await response.json();
         setError(err.error || 'Errore nella sottomissione');
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError('Errore nella sottomissione');
     } finally {
       setSubmitting(false);

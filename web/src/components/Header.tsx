@@ -45,8 +45,7 @@ export default function Header({ onRemovalNotification }: HeaderProps) {
             role: sessionData.role || 'STUDENT'
           });
         }
-      } catch (error) {
-        console.error('Failed to load user:', error);
+      } catch {
       } finally {
         setIsLoading(false);
       }
@@ -57,8 +56,7 @@ export default function Header({ onRemovalNotification }: HeaderProps) {
   const handleLogout = async () => {
     try {
       await api.auth.logout();
-    } catch (error) {
-      console.log('Logout error:', error);
+    } catch {
     }
     router.push('/login');
   };
@@ -114,8 +112,8 @@ export default function Header({ onRemovalNotification }: HeaderProps) {
               className="group flex items-center gap-2 cursor-pointer"
               onClick={() => user ? router.push(getDashboardLink()) : router.push('/login')}
             >
-              <div className="w-10 h-10 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+              <div className="w-10 h-10 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200 overflow-hidden">
+                <img src="/icon.svg" alt="E-Learning" className="w-8 h-8" />
               </div>
               <h1 className="text-xl font-black tracking-tight text-white group-hover:text-cyan-400 transition-colors duration-200">
                 E-<span className="text-cyan-400 group-hover:text-white">LEARN</span>
