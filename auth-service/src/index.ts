@@ -73,7 +73,7 @@ const RequestPasswordResetSchema = z.object({
 
 const ConfirmPasswordResetSchema = z.object({
   token: z.string().min(20, 'Token di reset non valido'),
-  password: z.string().min(8, 'Password deve essere di almeno 8 caratteri')
+  password: z.string().min(1, 'Password richiesta')
 });
 
 const VERIFICATION_CODE_TTL_MINUTES = 15;
@@ -94,6 +94,25 @@ function generatePasswordResetToken() {
 
 function hashPasswordResetToken(token: string) {
   return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+function validatePasswordStrength(password: string): string | null {
+  if (password.length < 8) {
+    return 'La password deve essere di almeno 8 caratteri';
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'La password deve contenere almeno una lettera maiuscola';
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'La password deve contenere almeno una lettera minuscola';
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'La password deve contenere almeno un numero';
+  }
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    return 'La password deve contenere almeno un carattere speciale';
+  }
+  return null;
 }
 
 function hashRefreshToken(token: string) {
@@ -915,24 +934,9 @@ return { verified: true };
     const { email, password, firstName, lastName } = parsed.data;
     const preferences = (request.body as any)?.preferences;
 
-    if (password.length < 8) {
-      return reply.status(400).send({ error: 'La password deve essere di almeno 8 caratteri' });
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      return reply.status(400).send({ error: 'La password deve contenere almeno una lettera maiuscola' });
-    }
-
-    if (!/[a-z]/.test(password)) {
-      return reply.status(400).send({ error: 'La password deve contenere almeno una lettera minuscola' });
-    }
-
-    if (!/[0-9]/.test(password)) {
-      return reply.status(400).send({ error: 'La password deve contenere almeno un numero' });
-    }
-
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      return reply.status(400).send({ error: 'La password deve contenere almeno un carattere speciale' });
+    const passwordError = validatePasswordStrength(password);
+    if (passwordError) {
+      return reply.status(400).send({ error: passwordError });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -1139,6 +1143,12 @@ return { verified: true };
     }
 
     const { token, password } = parsed.data;
+
+    const passwordError = validatePasswordStrength(password);
+    if (passwordError) {
+      return reply.status(400).send({ error: passwordError });
+    }
+
     const tokenHash = hashPasswordResetToken(token);
     const user = await prisma.user.findFirst({
       where: { passwordResetTokenHash: tokenHash }

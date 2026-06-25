@@ -1,20 +1,22 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = useMemo(() => searchParams.get('token') || '', [searchParams]);
-  const email = useMemo(() => searchParams.get('email') || '', [searchParams]);
+  const [token, setToken] = useState('');
+  const [email, setEmail] = useState('');
+  const [urlChecked, setUrlChecked] = useState(false);
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(null, '', window.location.pathname);
-    }
+    const params = new URLSearchParams(window.location.search);
+    setToken(params.get('token') || '');
+    setEmail(params.get('email') || '');
+    setUrlChecked(true);
+    window.history.replaceState(null, '', window.location.pathname);
     const meta = document.createElement('meta');
     meta.name = 'referrer';
     meta.content = 'no-referrer';
@@ -88,14 +90,14 @@ export default function ResetPasswordPage() {
 
           <button
             type="submit"
-            disabled={loading || !token}
+            disabled={loading || !urlChecked || !token}
             className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all disabled:opacity-50"
           >
             {loading ? 'Salvataggio...' : 'Aggiorna password'}
           </button>
         </form>
 
-        {!token && (
+        {urlChecked && !token && (
           <p className="mt-4 text-sm text-amber-300 text-center">Manca il token di reset nel link.</p>
         )}
 
