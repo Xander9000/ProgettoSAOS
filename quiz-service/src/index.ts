@@ -556,9 +556,9 @@ fastify.post<{ Body: CreateQuizBody }>('/quiz', { preValidation: [fastify.authen
 
   if (timeLimit !== undefined && timeLimit !== null) {
     try {
-      validateNumberInRange(timeLimit, 60, 7200, 'Time limit');
+      validateNumberInRange(timeLimit, 1, 120, 'Time limit');
     } catch {
-      return reply.status(400).send({ error: 'Valore non valido per il limite di tempo.' });
+      return reply.status(400).send({ error: 'Il limite di tempo deve essere compreso tra 1 e 120 minuti.' });
     }
   }
 
@@ -672,9 +672,9 @@ fastify.put<{ Params: QuizParams; Body: UpdateQuizBody }>('/quiz/:id', { preVali
   if (timeLimit !== undefined) {
     if (timeLimit !== null) {
       try {
-        validateNumberInRange(timeLimit, 60, 7200, 'Time limit');
+        validateNumberInRange(timeLimit, 1, 120, 'Time limit');
       } catch {
-        return reply.status(400).send({ error: 'Valore non valido per il limite di tempo.' });
+        return reply.status(400).send({ error: 'Il limite di tempo deve essere compreso tra 1 e 120 minuti.' });
       }
     }
     updateData.timeLimit = timeLimit;
@@ -1385,18 +1385,19 @@ fastify.post<{ Params: QuizParams; Body: SubmitQuizBody }>('/quiz/:id/submit', {
       }
 
       const timeLimit = quiz.timeLimit || 0;
+      let isTimeExpired = false;
       if (timeLimit > 0) {
         const startedAt = existingAttempt.startedAt?.getTime();
         if (startedAt) {
           const elapsedMs = Date.now() - startedAt;
           const limitMs = timeLimit * 60 * 1000;
           if (elapsedMs > limitMs) {
-            throw new Error('TIME_LIMIT_EXCEEDED');
+            isTimeExpired = true;
           }
         }
       }
 
-      if (!Array.isArray(questionSubmissions)) {
+      if (!isTimeExpired && !Array.isArray(questionSubmissions)) {
         throw new Error('INVALID_SUBMISSIONS_FORMAT');
       }
 
@@ -1404,65 +1405,72 @@ fastify.post<{ Params: QuizParams; Body: SubmitQuizBody }>('/quiz/:id/submit', {
       let totalScore = 0;
       const allQuestions = quiz.questions;
       const answeredQuestions = new Set<string>();
+      let hasPendingGrading = false;
 
-      for (const sub of questionSubmissions) {
-        if (seenQuestions.has(sub.questionId)) {
-          throw new Error('DUPLICATE_QUESTION');
-        }
-        seenQuestions.add(sub.questionId);
+      if (!isTimeExpired) {
+        for (const sub of questionSubmissions) {
+          if (seenQuestions.has(sub.questionId)) {
+            throw new Error('DUPLICATE_QUESTION');
+          }
+          seenQuestions.add(sub.questionId);
 
-        if (!sub.questionId || !isValidUUID(sub.questionId)) {
-          throw new Error('INVALID_QUESTION_ID');
-        }
-
-        const question = allQuestions.find((q: any) => q.id === sub.questionId);
-        if (!question) {
-          throw new Error('QUESTION_NOT_IN_QUIZ');
-        }
-
-        answeredQuestions.add(sub.questionId);
-
-        if (question.questionType === 'MULTIPLE_CHOICE') {
-          let points = 0;
-          let answerId: string | null = null;
-          let gradingStatus: string = 'ACCEPTED';
-
-          if (sub.answerId && isValidUUID(sub.answerId)) {
-            const validAnswerIds = question.answers.map((a: any) => a.id);
-            if (!validAnswerIds.includes(sub.answerId)) {
-              throw new Error('INVALID_ANSWER');
-            }
-            answerId = sub.answerId;
-            const selectedAnswer = question.answers.find((a: any) => a.id === sub.answerId);
-            const negPoints = quiz.enableNegativePoints ? quiz.negativePointsValue : 0;
-            if (selectedAnswer?.isCorrect) {
-              points = question.points;
-            } else if (negPoints > 0) {
-              points = -negPoints;
-            }
+          if (!sub.questionId || !isValidUUID(sub.questionId)) {
+            throw new Error('INVALID_QUESTION_ID');
           }
 
-          totalScore += points;
+          const question = allQuestions.find((q: any) => q.id === sub.questionId);
+          if (!question) {
+            throw new Error('QUESTION_NOT_IN_QUIZ');
+          }
 
-          await tx.questionSubmission.create({
-            data: {
-              attemptId: existingAttempt.id,
-              questionId: question.id,
-              answerId,
-              points,
-              gradingStatus: gradingStatus as GradingStatus
+          answeredQuestions.add(sub.questionId);
+
+          if (question.questionType === 'MULTIPLE_CHOICE') {
+            let points = 0;
+            let answerId: string | null = null;
+            let gradingStatus: string = 'ACCEPTED';
+
+            if (sub.answerId && isValidUUID(sub.answerId)) {
+              const validAnswerIds = question.answers.map((a: any) => a.id);
+              if (!validAnswerIds.includes(sub.answerId)) {
+                throw new Error('INVALID_ANSWER');
+              }
+              answerId = sub.answerId;
+              const selectedAnswer = question.answers.find((a: any) => a.id === sub.answerId);
+              const negPoints = quiz.enableNegativePoints ? quiz.negativePointsValue : 0;
+              if (selectedAnswer?.isCorrect) {
+                points = question.points;
+              } else if (negPoints > 0) {
+                points = -negPoints;
+              }
             }
-          });
-        } else {
-          await tx.questionSubmission.create({
-            data: {
-              attemptId: existingAttempt.id,
-              questionId: question.id,
-              textAnswer: sub.textAnswer || '',
-              points: 0,
-              gradingStatus: 'PENDING'
+
+            totalScore += points;
+
+            await tx.questionSubmission.create({
+              data: {
+                attemptId: existingAttempt.id,
+                questionId: question.id,
+                answerId,
+                points,
+                gradingStatus: gradingStatus as GradingStatus
+              }
+            });
+          } else {
+            const textAnswer = sub.textAnswer || '';
+            if (textAnswer.trim()) {
+              hasPendingGrading = true;
             }
-          });
+            await tx.questionSubmission.create({
+              data: {
+                attemptId: existingAttempt.id,
+                questionId: question.id,
+                textAnswer,
+                points: 0,
+                gradingStatus: (textAnswer.trim() ? 'PENDING' : 'REJECTED') as GradingStatus
+              }
+            });
+          }
         }
       }
 
@@ -1470,7 +1478,7 @@ fastify.post<{ Params: QuizParams; Body: SubmitQuizBody }>('/quiz/:id/submit', {
 
       for (const question of allQuestions) {
         if (!answeredQuestions.has(question.id)) {
-          const gradingStatus = question.questionType === 'OPEN_ANSWER' ? 'PENDING' : 'ACCEPTED';
+          const gradingStatus = question.questionType === 'OPEN_ANSWER' ? 'REJECTED' : 'ACCEPTED';
           await tx.questionSubmission.create({
             data: {
               attemptId: existingAttempt.id,
@@ -1485,9 +1493,8 @@ fastify.post<{ Params: QuizParams; Body: SubmitQuizBody }>('/quiz/:id/submit', {
       totalScore = Math.max(0, totalScore);
       const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
 
-      const hasOpenAnswerQuestions = quiz.questions.some((q: any) => q.questionType === 'OPEN_ANSWER');
-      const gradingComplete = !hasOpenAnswerQuestions;
-      const needsGrading = hasOpenAnswerQuestions;
+      const needsGrading = hasPendingGrading;
+      const gradingComplete = !needsGrading;
       const finalPassed: boolean | null = gradingComplete ? percentage >= quiz.passingScore : null;
 
       await tx.attempt.update({
@@ -1528,9 +1535,6 @@ fastify.post<{ Params: QuizParams; Body: SubmitQuizBody }>('/quiz/:id/submit', {
     const e = err as Error;
     if (e.message === 'MAX_ATTEMPTS_REACHED') {
       return reply.status(403).send({ error: 'Hai esaurito i tentativi per questo quiz.' });
-    }
-    if (e.message === 'TIME_LIMIT_EXCEEDED') {
-      return reply.status(400).send({ error: 'Tempo scaduto. Il quiz è stato automaticamente concluso.' });
     }
     if (e.message === 'DUPLICATE_QUESTION') {
       return reply.status(400).send({ error: 'Domanda duplicata nella submission.' });
