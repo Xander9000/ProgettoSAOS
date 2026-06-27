@@ -1,6 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
+const crypto = require('crypto');
 
 const coursePrisma = new PrismaClient();
+
+function hashEnrollmentKey(key) {
+  return crypto.createHash('sha256').update(key).digest('hex');
+}
 
 const TEACHER_IDS = [
   '49e5313e-37e4-4963-bfb2-8433d6927f1e',
@@ -20,6 +25,7 @@ const COURSE_UUIDS = {
   microservizi: 'a460315e-7e0b-4566-9e2e-0290e864e104',
   cloudNative: '4c269623-c65d-4aa5-aad2-417314c63458',
   sicurezza: '4a710f7f-1dc4-4784-85f8-af749b772eef',
+  machineLearning: 'a6b7c8d9-e0f1-2345-6789-abcdef012345',
 };
 
 async function seedCourse() {
@@ -32,34 +38,32 @@ async function seedCourse() {
   await coursePrisma.course.createMany({
     data: [
       { id: COURSE_UUIDS.microservizi, title: 'Fondamenti di Microservizi', description: 'Corso introduttivo sui microservizi', teacherId: TEACHER_IDS[0], isPublished: true, enrollmentType: 'FREE' },
-      { id: COURSE_UUIDS.cloudNative, title: 'Architettura Cloud Native', description: 'Architetture moderne per il cloud', teacherId: TEACHER_IDS[0], isPublished: true, enrollmentType: 'KEY', enrollmentKey: 'cloud2024' },
+      { id: COURSE_UUIDS.cloudNative, title: 'Architettura Cloud Native', description: 'Architetture moderne per il cloud', teacherId: TEACHER_IDS[0], isPublished: true, enrollmentType: 'KEY', enrollmentKey: hashEnrollmentKey('cloud2024') },
       { id: COURSE_UUIDS.sicurezza, title: 'Sicurezza API e WAF', description: 'Security per applicazioni web', teacherId: TEACHER_IDS[1], isPublished: true, enrollmentType: 'FREE' },
       { title: 'DevOps Avanzato', description: 'CI/CD e infrastruttura come codice', teacherId: TEACHER_IDS[1], isPublished: false, enrollmentType: 'APPROVAL' },
-      { title: 'Introduzione al Machine Learning', description: 'Primi passi nel ML', teacherId: TEACHER_IDS[2], isPublished: true, enrollmentType: 'FREE' },
-      { title: 'Data Engineering con Python', description: 'Gestione dati su larga scala', teacherId: TEACHER_IDS[2], isPublished: true, enrollmentType: 'KEY', enrollmentKey: 'dataeng' },
+      { id: COURSE_UUIDS.machineLearning, title: 'Introduzione al Machine Learning', description: 'Primi passi nel ML', teacherId: TEACHER_IDS[2], isPublished: true, enrollmentType: 'FREE' },
+      { title: 'Data Engineering con Python', description: 'Gestione dati su larga scala', teacherId: TEACHER_IDS[2], isPublished: true, enrollmentType: 'KEY', enrollmentKey: hashEnrollmentKey('dataeng') },
     ],
   });
   console.log('Created 6 courses');
 
-  const allCourses = await coursePrisma.course.findMany({ select: { id: true } });
-
   await coursePrisma.enrollment.createMany({
     data: [
-      { courseId: allCourses[0].id, studentId: STUDENT_IDS[0], status: 'ACTIVE' },
-      { courseId: allCourses[0].id, studentId: STUDENT_IDS[1], status: 'ACTIVE' },
-      { courseId: allCourses[2].id, studentId: STUDENT_IDS[0], status: 'ACTIVE' },
-      { courseId: allCourses[2].id, studentId: STUDENT_IDS[2], status: 'ACTIVE' },
-      { courseId: allCourses[4].id, studentId: STUDENT_IDS[1], status: 'ACTIVE' },
-      { courseId: allCourses[4].id, studentId: STUDENT_IDS[3], status: 'ACTIVE' },
-      { courseId: allCourses[4].id, studentId: STUDENT_IDS[4], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.microservizi, studentId: STUDENT_IDS[0], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.microservizi, studentId: STUDENT_IDS[1], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.sicurezza, studentId: STUDENT_IDS[0], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.sicurezza, studentId: STUDENT_IDS[2], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.machineLearning, studentId: STUDENT_IDS[1], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.machineLearning, studentId: STUDENT_IDS[3], status: 'ACTIVE' },
+      { courseId: COURSE_UUIDS.machineLearning, studentId: STUDENT_IDS[4], status: 'ACTIVE' },
     ],
   });
   console.log('Created 7 enrollments');
 
   await coursePrisma.teacherMessage.createMany({
     data: [
-      { courseId: allCourses[0].id, content: 'Benvenuti al corso di Microservizi! Inizieremo con i fondamenti.' },
-      { courseId: allCourses[4].id, content: 'Prima lezione di Machine Learning - preparate il vostro ambiente!' },
+      { courseId: COURSE_UUIDS.microservizi, content: 'Benvenuti al corso di Microservizi! Inizieremo con i fondamenti.' },
+      { courseId: COURSE_UUIDS.machineLearning, content: 'Prima lezione di Machine Learning - preparate il vostro ambiente!' },
     ],
   });
   console.log('Created 2 teacher messages');

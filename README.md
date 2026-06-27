@@ -1,9 +1,9 @@
 <p align="center">  
     <img src="web/public/icon.svg" alt="E-Learning Platform Logo" width="96">
 </p>
-    
+
 <h1 align="center">E-Learning Platform</h1>
-    
+
 <p align="center">  
     Piattaforma e-learning a microservizi con backend TypeScript/Fastify, frontend Next.js/React, PostgreSQL e Docker Compose.
 </p>
@@ -517,7 +517,6 @@ Se vuoi usare un provider SMTP invece di Postfix:
 ### DevOps
 
 - **Containerizzazione**: Docker + Docker Compose (rete isolata `elearning_net`)
-- **Testing**: Vitest
 - **Linting**: ESLint + TypeScript strict
 - **Immagini Base**: `node:20-alpine`, `postgres:15-alpine`, `rabbitmq:3-management-alpine`
 
