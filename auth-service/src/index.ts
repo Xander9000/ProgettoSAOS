@@ -155,7 +155,7 @@ function tryDecryptSecret(ciphertext: string): string | null {
 
 const AUDIT_SERVICE_URL = process.env.AUDIT_SERVICE_URL;
 
-async function reportAuditEvent(eventType: string, payload: Record<string, any>) {
+async function reportAuditEvent(eventType: string, payload: Record<string, any>, severity: string = 'INFO') {
   if (!AUDIT_SERVICE_URL) return;
   try {
     await fetch(`${AUDIT_SERVICE_URL}/webhook`, {
@@ -164,7 +164,12 @@ async function reportAuditEvent(eventType: string, payload: Record<string, any>)
         'Content-Type': 'application/json',
         'x-internal-api-key': INTERNAL_API_KEY
       },
-      body: JSON.stringify({ event_type: eventType, payload })
+      body: JSON.stringify({
+        type: eventType,
+        userId: payload.userId || null,
+        severity,
+        details: payload
+      })
     });
   } catch {
     // fire-and-forget, ignore failures
@@ -333,6 +338,11 @@ setup().then(() => {
     
     if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
       fastify.log.warn({ email, ip: request.ip }, 'Tentativo di login fallito: credenziali non valide');
+      reportAuditEvent('LOGIN_FAILED', {
+        email,
+        reason: 'invalid_credentials',
+        timestamp: new Date().toISOString()
+      }, 'HIGH');
       return reply.status(401).send({ error: 'Credenziali non valide o utente inesistente' });
     }
 
@@ -372,6 +382,12 @@ setup().then(() => {
     reply.setCookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 });
 
     fastify.log.info(`Utente [${user.role}] ${user.id} ha effettuato il login con successo.`);
+    reportAuditEvent('LOGIN_OK', {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+      timestamp: new Date().toISOString()
+    });
 
     return {
       user: { id: user.id, email: user.email, role: user.role },
@@ -512,9 +528,9 @@ setup().then(() => {
 
     reportAuditEvent('TWO_FACTOR_DISABLED', {
       userId: userPayload.userId,
-      ip: request.ip,
-      userAgent: request.headers['user-agent']
-    });
+      email: user?.email,
+      timestamp: new Date().toISOString()
+    }, 'HIGH');
 
     return { success: true };
   });
@@ -784,7 +800,7 @@ return { verified: true };
           userId: decoded.userId,
           ip: request.ip,
           userAgent: request.headers['user-agent']
-        });
+        }, 'CRITICAL');
         return reply.status(401).send({ error: 'Refresh token già utilizzato. Effettua il login.' });
       }
 
@@ -804,7 +820,7 @@ return { verified: true };
             userId: decoded.userId,
             ip: request.ip,
             userAgent: request.headers['user-agent']
-          });
+          }, 'CRITICAL');
           return reply.status(401).send({ error: 'Refresh token già utilizzato. Effettua il login.' });
         }
         throw err;

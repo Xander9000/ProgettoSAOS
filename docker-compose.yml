@@ -71,6 +71,7 @@ services:
       - SENDMAIL_PATH=${SENDMAIL_PATH:-}
       - APP_PUBLIC_URL=${APP_PUBLIC_URL:-http://localhost:8080}
       - TWO_FACTOR_ENCRYPTION_KEY=${TWO_FACTOR_ENCRYPTION_KEY}
+      - AUDIT_SERVICE_URL=http://audit-service:3006
     networks:
       - elearning_net
     depends_on:
